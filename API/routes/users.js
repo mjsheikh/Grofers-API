@@ -4,7 +4,9 @@ const User = require('../models/User');
 const Rticket = require('../models/Rticket');
 
 // Methods
-router.get('/', async (req,res)=>{
+
+// get all users
+router.get('/all', async (req,res)=>{
     try{
         const users = await User.find();
         res.json(users);
@@ -13,7 +15,9 @@ router.get('/', async (req,res)=>{
         res.json(err);
     }
 });
-router.post('/', async (req,res)=>{
+
+// post a new user
+router.post('/create', async (req,res)=>{
         const user = new User({
             name : req.body.name,
             email : req.body.email,
@@ -21,19 +25,22 @@ router.post('/', async (req,res)=>{
         });
     
     try{
-        const savedUser = user.save();
-        res.json(savedUser);
+        user.save();
+        res.json(user);
     }
     catch(err){
         res.json(err);
     }
 });
+
+// purchase new ticket from a given user name, update his applications and the given ticket's applicants
 router.put('/purchase/:name/:lottery', async (req, res) => {
     const rtickets = await Rticket.find();
     const users  = await User.find();
     const rticket = rtickets.find(rticket => rticket.lottery == req.params.lottery);
     const user = users.find(user => user.name == req.params.name);
     try{
+        // check if ticket already purchased
         if(user.applications.includes(req.params.lottery)){
             res.json({message : "Raffle ticket already purchased!"});
         }

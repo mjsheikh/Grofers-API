@@ -15,7 +15,9 @@ function selectProps(...props){
   }
 
 // Methods
-router.get('/', async (req,res)=>{
+
+// get all tickets
+router.get('/all', async (req,res)=>{
     try{
         const rtickets = await Rticket.find();
         res.json(rtickets);
@@ -25,11 +27,13 @@ router.get('/', async (req,res)=>{
     }
 });
 
+// get winners from last week 
 router.get('/winners', async (req,res)=>{
     try{
         const rtickets = await Rticket.find();
         let currDate = new Date();
-        currDate.setDate(currDate.getDate()-8);
+        // set date as 8 days back from current date
+        currDate.setDate(currDate.getDate()-8); 
         let prev = rtickets.filter(nextLottery => nextLottery.date > currDate);  
         res.json(prev.map(selectProps("lottery","winner", "prize")));
     }
@@ -38,11 +42,14 @@ router.get('/winners', async (req,res)=>{
     }
 });
 
+// get very next raffle lottery opening 
 router.get('/next', async (req,res)=>{
     try{
         let currDate = new Date();
         const rtickets = await Rticket.find();
+        // get the ticket which is immediate next to open
         let nextLottery = rtickets.find(nextLottery => nextLottery.date > currDate);
+        // respond with a message specifying timings of opening and other crucial specifications
         res.json({
             message : "Next lottery opens at " + nextLottery.time,
             lottery : nextLottery.lottery,
@@ -56,7 +63,8 @@ router.get('/next', async (req,res)=>{
     }
 });
 
-router.post('/', async (req,res)=>{
+// post new raffle ticket
+router.post('/create', async (req,res)=>{
     let rticket;
     if(req.body.date){
         rticket = new Rticket({
@@ -76,14 +84,16 @@ router.post('/', async (req,res)=>{
         });
     }
     try{
-        const savedRticket = rticket.save();
-        res.json(savedRticket);
+        rticket.save();
+        res.json(rticket);
     }
     catch(err){
         res.json(err);
     }
 });
 
+
+// compute winner for the specified lottery from its applicants through a random generator 
 router.put('/winner/:lottery', async (req, res) => {
     const rtickets = await Rticket.find();
     const rticket = await rtickets.find(rticket => rticket.lottery == req.params.lottery);
