@@ -9,7 +9,7 @@ through mLab. (Server URL for the Database provided in `.env`)
 
 Two schemas have been used i.e. `User` and `Rticket` 
 
-##### User Schema
+#### User Schema
 For storing app users. This carries the following properties whose names are self-explanatory :
 - `name` : User's name                           (String, Mandatory field)
 - `email`: User's email id                       (String, Mandatory field)
@@ -26,7 +26,7 @@ For storing app users. This carries the following properties whose names are sel
 - `PUT` :
     - For purchasing a new lottery named 'lottery' by a user named 'name' {Endpoint : `/users/purchase/:name/:lottery`}
 
-##### Rticket Schema
+#### Rticket Schema
 For storing info about various raffle tickets. This carries the following properties whose names are self-explanatory :
 - `lottery` : Raffle Lottery's name                    (String, Mandatory field) 
 - `prize` : Prize to be won                            (String, Madatory field)
